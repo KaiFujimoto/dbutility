@@ -15,5 +15,5 @@
 
 ---------------------------------
 ## How to use
-* In the dbutility folder: ```python main.py```
+* In the dbutility folder on the commandline run: ```python main.py```
   * There should be command line prompts for you to follow
