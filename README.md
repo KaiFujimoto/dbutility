@@ -1,6 +1,7 @@
 # Database Utility
 ---------------------------------
 ## Welcome to Kai's baby Database Utility
+This utility came from a need to keep in sync the remote database and the local development database for developers.
 * Notes
   * I'm still relatively new to SQL and MySQL with Python, so there are definitely a few bugs
   * I know that right now, I only pull and check the outer schema, the individual table schemas, and the individual columns
