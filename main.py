@@ -165,7 +165,7 @@ def main(argv):
     for table in remote_db_array:
         # print(f"Checking {table} for missing columnss....\n")
         table_mismatch_details = {}
-        schemaquery = f"select column_name, column_default, is_nullable, column_type, column_key, extra, collation_name from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{table}' and TABLE_SCHEMA = 'safire'"
+        schemaquery = f"select column_name from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{table}' and TABLE_SCHEMA = 'safire'"
         query_categories = ["column_name", "column_default", "is_nullable", "column_type", "column_key", "extra", "collation_name"]
         cursorremote.execute(schemaquery)
         remote_table_schema = cursorremote.fetchall()
@@ -194,9 +194,9 @@ def main(argv):
             i += 1
 
         #I've made the decision that order does not matter, so i'll just add the missing columns at the end
-        # print(remote_table)
+        print(remote_table)
 
-        # print(local_table)
+        print(local_table)
 
         # print(missing_columns)
 
@@ -229,25 +229,31 @@ def main(argv):
         colbycol = {}
         for remote_column in remote_table_schema:
             #i'm assuming column names are unique
-            local_column = local_table_schema[i]
-
+            column_name = remote_column[0]
+            schemaquery = f"select column_name, column_default, is_nullable, column_type, column_key, extra, collation_name from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{table}' and TABLE_SCHEMA = 'safire' and column_name = '{column_name}'"
+            cursorremote.execute(schemaquery)
+            remote_column = cursorremote.fetchall()
+            remote_column = remote_column[0] #comes back as an array with a single element, so just getting the first element
+            cursorlocal.execute(schemaquery)
+            local_column = cursorlocal.fetchall()
+            local_column = local_column[0]
             j = 0
             colbycol[remote_column[0]] = []
             for col in remote_column:
                 loc = local_column[j]
+
                 # print("before clean ", col, "and ", loc)
+                if loc:
+                    if type(loc) is not str:
+                        loc = loc.decode("utf-8").lower()
+                else:
+                    loc = "NoneType"
+
                 if col:
-                    if loc:
-                        if type(loc) is not str:
-                            loc = local_column[j].decode("utf-8").lower()
-                    else:
-                        loc = "NoneType"
+                    if type(col) is not str:
+                        col = col.decode("utf-8").lower()
                 else:
                     col = "NoneType"
-                    if loc:
-                        pass
-                    else:
-                        loc = "NoneType"
 
                 #clean parameters takes out everything but spaces and numbers and letters
                 # this way i can effectively compare things
