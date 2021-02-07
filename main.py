@@ -194,9 +194,6 @@ def main(argv):
             i += 1
 
         #I've made the decision that order does not matter, so i'll just add the missing columns at the end
-        print(remote_table)
-
-        print(local_table)
 
         # print(missing_columns)
 
